@@ -62,9 +62,7 @@ else:
     st.sidebar.warning("⚠️ EPS 或 PE 数据格式异常")
 
 
-# 通过 PE × EPS 得到当前股价（动态计算）
-price_now = eps_default * pe_default
-st.sidebar.metric("当前股价（估算）", f"{price_now:.2f} 元")
+
 
 st.sidebar.markdown("---")
 st.sidebar.header("用户输入参数")

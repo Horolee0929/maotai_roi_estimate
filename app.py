@@ -9,28 +9,32 @@ st.title("📈 贵州茅台实时估值 + 回报计算器")
 @st.cache_data(show_spinner=False)
 def get_maotai_data():
     try:
-        # ✅ 原 df = ak.stock_financial_analysis_indicator()
-        df = ak.stock_a_lg_indicator()
-        # ✅ 调试
+        # ✅ 正确接口：东方财富龙头股指标
+        df = ak.stock_a_lg_indicator_em()
+
+        # ✅ 调试（可保留或注释）
         st.write("AK 返回数据结构预览：", df.head())  
         st.write("列名列表：", df.columns.tolist())    
-         # ✅ 调试
-        
-        if "股票简称" in df.columns:
-            df = df[df["股票简称"] == "贵州茅台"]
+
+        # ✅ 字段名称确认 —— 这个接口返回的字段是“名称”不是“股票简称”
+        if "名称" in df.columns:
+            df = df[df["名称"] == "贵州茅台"]
         elif "股票代码" in df.columns:
             df = df[df["股票代码"] == "600519"]
         else:
-            raise ValueError("接口数据中未找到股票代码或简称")
+            raise ValueError("接口数据中未找到名称或股票代码")
 
-        eps = float(df.iloc[0]["基本每股收益(元)"])
-        pe = float(df.iloc[0]["市盈率"])
-        dividend_ratio = float(df.iloc[0]["股息率(%)"]) / 100  # 转换为小数
+        # ✅ 字段名也要根据实际接口调整
+        eps = float(df.iloc[0]["每股收益(元)"])
+        pe = float(df.iloc[0]["市盈率-TTM"])
+        dividend_ratio = 0.04  # 暂定股息率
         price = eps * pe
+
         return eps, pe, price, dividend_ratio
+
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，使用默认值：{e}")
-        return 68.63, 22.0, 1388.0, 0.04  # 默认股息率 4%
+        return 68.63, 22.0, 1388.0, 0.04
 
 # 获取数据
 eps, pe, price_now, dividend_ratio = get_maotai_data()

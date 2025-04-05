@@ -1,2 +1,5 @@
 streamlit
 akshare
+pandas
+lxml
+requests

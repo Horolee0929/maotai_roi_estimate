@@ -1,3 +1,7 @@
+import streamlit as st
+import akshare as ak
+import pandas as pd
+
 st.set_page_config(page_title="全球股票投资回报估算器", layout="centered")
 st.title("📈 全球股票估值 + 回报率计算器")
 

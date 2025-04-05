@@ -1,22 +1,29 @@
 import streamlit as st
 
 # ✅ 自定义蓝色滑动条样式
+
 st.markdown(
     """
     <style>
-    .stSlider > div[data-baseweb="slider"] > div {
-        color: #1f77b4;
+    /* 滑动条轨道背景（主要线条） */
+    .stSlider [data-testid="stSlider"] > div > div:first-child {
+        background-color: #cce5ff; /* 非激活部分轨道（浅蓝） */
     }
-    .stSlider [role="slider"] {
-        background-color: #1f77b4;
-    }
+
+    /* 滑动条轨道高亮部分 */
     .stSlider [data-testid="stSlider"] > div > div:nth-child(2) {
+        background-color: #1f77b4; /* 激活部分轨道（深蓝） */
+    }
+
+    /* 滑动按钮圆点 */
+    .stSlider [role="slider"] {
         background-color: #1f77b4;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 # ✅ 回报率计算逻辑
 def estimate_annual_return(

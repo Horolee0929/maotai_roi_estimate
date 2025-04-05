@@ -1,9 +1,3 @@
-import streamlit as st
-import akshare as ak
-import pandas as pd
-
-
-
 st.set_page_config(page_title="全球股票投资回报估算器", layout="centered")
 st.title("📈 全球股票估值 + 回报率计算器")
 
@@ -33,21 +27,28 @@ def get_stock_data(market, stock_code):
             pe = float(df["市盈率"].values[0])
             price = float(df["最新价"].values[0])
             dividend_ratio = float(df["股息率"].values[0]) / 100 if "股息率" in df.columns else 0.005
-        return eps, pe, price, dividend_ratio
+        return eps, pe, price, dividend_ratio, True
     except Exception as e:
-        st.warning(f"⚠️ 实时数据获取失败，使用默认值：{e}")
-        return 6.0, 22.0, 150.0, 0.02
+        st.warning(f"⚠️ 实时数据获取失败，请手动输入参数。错误信息：{e}")
+        return 0.0, 0.0, 0.0, 0.0, False
 
 # 获取数据
-eps, pe, price_now, dividend_ratio = get_stock_data(market, stock_code)
+eps, pe, price_now, dividend_ratio, data_success = get_stock_data(market, stock_code)
 
-# 显示数据
-st.subheader("📌 实时财务指标")
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("每股收益 EPS", f"{eps:.2f}")
-col2.metric("市盈率 PE", f"{pe:.2f}")
-col3.metric("当前股价", f"{price_now:.2f}")
-col4.metric("股息率", f"{dividend_ratio*100:.2f}%")
+# 显示数据或手动输入
+st.subheader("📌 财务指标")
+
+if data_success:
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("每股收益 EPS", f"{eps:.2f}")
+    col2.metric("市盈率 PE", f"{pe:.2f}")
+    col3.metric("当前股价", f"{price_now:.2f}")
+    col4.metric("股息率", f"{dividend_ratio*100:.2f}%")
+else:
+    eps = st.number_input("每股收益 EPS（手动输入）", value=6.0)
+    pe = st.number_input("市盈率 PE（手动输入）", value=22.0)
+    price_now = st.number_input("当前股价（手动输入）", value=150.0)
+    dividend_ratio = st.number_input("股息率（%）（手动输入）", value=2.0) / 100
 
 st.markdown("---")
 

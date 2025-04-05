@@ -2,6 +2,7 @@ import streamlit as st
 import akshare as ak
 import pandas as pd
 
+
 st.set_page_config(page_title="全球股票投资回报估算器", layout="centered")
 st.title("📈 全球股票估值 + 回报率计算器")
 
@@ -34,7 +35,7 @@ def get_stock_data(market, stock_code):
         return eps, pe, price, dividend_ratio, True
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，请手动输入参数。错误信息：{e}")
-        return 0.0, 0.0, 0.0, 0.0, False
+        return None, None, None, None, False
 
 # 获取数据
 eps, pe, price_now, dividend_ratio, data_success = get_stock_data(market, stock_code)
@@ -49,16 +50,17 @@ if data_success:
     col3.metric("当前股价", f"{price_now:.2f}")
     col4.metric("股息率", f"{dividend_ratio*100:.2f}%")
 else:
-    eps = st.number_input("每股收益 EPS（手动输入）", value=6.0)
-    pe = st.number_input("市盈率 PE（手动输入）", value=22.0)
-    price_now = st.number_input("当前股价（手动输入）", value=150.0)
-    dividend_ratio = st.number_input("股息率（%）（手动输入）", value=2.0) / 100
+    eps = st.number_input("每股收益 EPS（手动输入）", min_value=0.0, step=0.1, format="%.2f")
+    pe = st.number_input("市盈率 PE（手动输入）", min_value=0.0, step=0.1, format="%.2f")
+    price_now = st.number_input("当前股价（手动输入）", min_value=0.0, step=0.1, format="%.2f")
+    dividend_ratio_input = st.number_input("股息率（%）（手动输入）", min_value=0.0, step=0.1, format="%.2f")
+    dividend_ratio = dividend_ratio_input / 100
 
 st.markdown("---")
 
 # 用户输入参数
 st.subheader("🧮 回报率估算参数")
-buy_price = st.number_input("你的买入价（元/美元）", value=price_now)
+buy_price = st.number_input("你的买入价（元/美元）", value=price_now if price_now else 100.0)
 future_pe = st.slider("未来市盈率 PE（假设）", 5.0, 60.0, 20.0)
 leverage = st.slider("杠杆倍数", 1.0, 3.0, 1.0)
 holding_years = st.slider("持有年限", 1, 10, 1)

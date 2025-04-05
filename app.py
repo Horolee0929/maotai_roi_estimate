@@ -37,7 +37,7 @@ def get_maotai_data():
         return 68.63, 22.0, 1388.0, 0.04
 
 # 获取数据
-#eps, pe, price_now, dividend_ratio = get_maotai_data()
+eps, pe, price_now, dividend_ratio = get_maotai_data()
 
 # 显示实时指标
 st.subheader("📌 实时财务数据（贵州茅台）")

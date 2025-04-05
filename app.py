@@ -1,7 +1,7 @@
 import streamlit as st
 import akshare as ak
 import pandas as pd
-
+import yfinance as yf
 
 st.set_page_config(page_title="全球股票投资回报估算器", layout="centered")
 st.title("📈 全球股票估值 + 回报率计算器")
@@ -15,24 +15,26 @@ stock_code = st.sidebar.text_input("输入股票代码 (A股如600519，美股�
 def get_stock_data(market, stock_code):
     try:
         if market == "A股":
-            df = ak.stock_a_lg_indicator_em()
-            df = df[df["股票代码"] == stock_code]
-            if df.empty:
-                raise ValueError("未找到 A股数据")
-            eps = float(df["每股收益(元)"].values[0])
-            pe = float(df["市盈率-TTM"].values[0])
-            price = eps * pe
-            dividend_ratio = 0.04  # A股暂默认 4%
-        else:  # 美股
-            df = ak.stock_us_fundamental()
-            df = df[df["股票代码"] == stock_code.upper()]
-            if df.empty:
-                raise ValueError("未找到美股数据")
-            eps = float(df["每股收益"].values[0])
-            pe = float(df["市盈率"].values[0])
-            price = float(df["最新价"].values[0])
-            dividend_ratio = float(df["股息率"].values[0]) / 100 if "股息率" in df.columns else 0.005
-        return eps, pe, price, dividend_ratio, True
+            stock_code_full = stock_code if stock_code.startswith("6") else f"sz{stock_code}"
+            df = ak.stock_individual_info_em(symbol=stock_code_full)
+            eps_row = df[df["item"] == "每股收益"]
+            pe_row = df[df["item"] == "市盈率"]
+            price_row = df[df["item"] == "最新价"]
+            eps = float(eps_row["value"].values[0]) if not eps_row.empty else None
+            pe = float(pe_row["value"].values[0]) if not pe_row.empty else None
+            price = float(price_row["value"].values[0]) if not price_row.empty else eps * pe if eps and pe else None
+            dividend_ratio = 0.04
+        else:
+            stock = yf.Ticker(stock_code)
+            info = stock.info
+            eps = float(info.get("trailingEps", 0))
+            pe = float(info.get("trailingPE", 0))
+            price = float(info.get("currentPrice", 0))
+            dividend_ratio = float(info.get("dividendYield", 0) or 0)
+        if eps and pe and price:
+            return eps, pe, price, dividend_ratio, True
+        else:
+            raise ValueError("缺失美股关键数据")
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，请手动输入参数。错误信息：{e}")
         return None, None, None, None, False

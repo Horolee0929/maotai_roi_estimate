@@ -11,6 +11,7 @@ st.sidebar.header("📌 股票选择")
 market = st.sidebar.selectbox("选择市场", ["A股", "美股"])
 stock_code = st.sidebar.text_input("输入股票代码 (A股如600519，美股如AAPL)", value="600519" if market == "A股" else "AAPL")
 
+# 数据获取函数
 @st.cache_data(show_spinner=False)
 def get_stock_data(market, stock_code):
     try:
@@ -23,41 +24,42 @@ def get_stock_data(market, stock_code):
             eps = float(eps_row["value"].values[0]) if not eps_row.empty else None
             pe = float(pe_row["value"].values[0]) if not pe_row.empty else None
             price = float(price_row["value"].values[0]) if not price_row.empty else eps * pe if eps and pe else None
-            dividend_ratio = 0.04
+            dividend = 0.0
         else:
             stock = yf.Ticker(stock_code)
             info = stock.info
             eps = float(info.get("trailingEps", 0))
             pe = float(info.get("trailingPE", 0))
             price = float(info.get("currentPrice", 0))
-            dividend_yield_raw = info.get("dividendYield")
-            dividend_ratio = float(dividend_yield_raw) if isinstance(dividend_yield_raw, (float, int)) else 0.0
+            dividend = float(info.get("dividendRate", 0))
         if eps and pe and price:
-            return eps, pe, price, dividend_ratio, True
+            dividend_ratio = dividend / price if price > 0 else 0.0
+            return eps, pe, price, dividend, dividend_ratio, True
         else:
             raise ValueError("缺失关键财务指标")
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，请手动输入参数。错误信息：{e}")
-        return None, None, None, None, False
+        return None, None, None, None, None, False
 
 # 获取数据
-eps, pe, price_now, dividend_ratio, data_success = get_stock_data(market, stock_code)
+eps, pe, price_now, dividend_amount, dividend_ratio, data_success = get_stock_data(market, stock_code)
 
 # 显示数据或手动输入
 st.subheader("📌 财务指标")
 
 if data_success:
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("每股收益 EPS", f"{eps:.2f}")
     col2.metric("市盈率 PE", f"{pe:.2f}")
     col3.metric("当前股价", f"{price_now:.2f}")
-    col4.metric("股息率", f"{dividend_ratio * 100:.2f}%")
+    col4.metric("每股分红（实时）", f"{dividend_amount:.2f}")
+    col5.metric("股息率", f"{dividend_ratio * 100:.2f}%")
 else:
     eps = st.number_input("每股收益 EPS（手动输入）", min_value=0.0, step=0.1, format="%.2f")
     pe = st.number_input("市盈率 PE（手动输入）", min_value=0.0, step=0.1, format="%.2f")
     price_now = st.number_input("当前股价（手动输入）", min_value=0.0, step=0.1, format="%.2f")
-    dividend_ratio_input = st.number_input("股息率（%）（手动输入）", min_value=0.0, step=0.1, format="%.2f")
-    dividend_ratio = dividend_ratio_input / 100
+    dividend_amount = st.number_input("每股分红（手动输入）", min_value=0.0, step=0.1, format="%.2f")
+    dividend_ratio = dividend_amount / price_now if price_now > 0 else 0.0
 
 st.markdown("---")
 

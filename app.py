@@ -30,7 +30,7 @@ def get_stock_data(market, stock_code):
             eps = float(info.get("trailingEps", 0))
             pe = float(info.get("trailingPE", 0))
             price = float(info.get("currentPrice", 0))
-            dividend_ratio = float(info.get("dividendYield", 0) or 0)
+            dividend_ratio = float(info.get("dividendYield", 0) or 0)  # 小数
         if eps and pe and price:
             return eps, pe, price, dividend_ratio, True
         else:

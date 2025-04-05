@@ -6,10 +6,10 @@ import akshare as ak
 @st.cache_data(show_spinner=False)
 def get_eps_pe():
     try:
-        df = ak.stock_a_lg_indicator()
-        df = df[df["代码"] == "600519"]
-        eps = float(df["每股收益"].values[0])
-        pe = float(df["市盈率(TTM)"].values[0])
+        df = ak.stock_financial_analysis_indicator()
+        df = df[df["股票代码"] == "600519"]
+        eps = float(df["基本每股收益(元)"].values[0])
+        pe = float(df["市盈率"].values[0])
         return eps, pe
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，使用默认值：{e}")
@@ -21,8 +21,9 @@ eps_default, pe_default = get_eps_pe()
 
 
 # --- 测试用，查看数据结构是否正常 ---
-df = ak.stock_a_lg_indicator()
+df = ak.stock_financial_analysis_indicator()
 st.write("AKShare 获取的数据预览：", df.head())
+
 # --------------------------------------
 
 

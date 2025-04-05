@@ -9,7 +9,8 @@ st.title("📈 贵州茅台实时估值 + 回报计算器")
 @st.cache_data(show_spinner=False)
 def get_maotai_data():
     try:
-        df = ak.stock_financial_analysis_indicator()
+        # ✅ 原 df = ak.stock_financial_analysis_indicator()
+        df = ak.stock_a_lg_indicator()
         # ✅ 调试
         st.write("AK 返回数据结构预览：", df.head())  
         st.write("列名列表：", df.columns.tolist())    

@@ -2,16 +2,17 @@ import streamlit as st
 import akshare as ak
 
 # ✅ 函数定义放顶部
+
 @st.cache_data(show_spinner=False)
 def get_eps_pe():
     try:
-        df = ak.stock_fundamental_analysis_indicator(symbol="600519")
-        latest = df.iloc[-1]
-        eps = float(latest["基本每股收益(元)"])
-        pe = float(latest["市盈率"])
+        df = ak.stock_a_lg_indicator()
+        df = df[df["代码"] == "600519"]
+        eps = float(df["每股收益"].values[0])
+        pe = float(df["市盈率(TTM)"].values[0])
         return eps, pe
     except Exception as e:
-        st.warning("⚠️ 实时数据获取失败，使用默认值")
+        st.warning(f"⚠️ 实时数据获取失败，使用默认值：{e}")
         return 68.63, 22.0
 
 # ✅ 💥 调用函数，获取实时数据 —— 这必须在任何使用 eps_default/pe_default 之前！
@@ -48,11 +49,11 @@ def estimate_annual_return(
         '年化回报率 (%)': round(annualized_return * 100, 2)
     }
 
-# ---------------- 页面展示 ----------------
+# ✅页面展示 
 
 st.title("📈 贵州茅台投资回报率估算器")
 
-# ---------------- 获取实时数据 EPS Price PE ----------------
+# ✅ 获取实时数据 EPS Price PE 
 
 st.sidebar.header("实时财务数据）")
 
@@ -64,7 +65,7 @@ else:
     st.sidebar.warning("⚠️ EPS 或 PE 数据格式异常")
 
 
-# ---------------- 输入数据 买入股价 分红率 杠杆率----------------
+# ✅ 输入数据 买入股价 分红率 杠杆率
 
 st.sidebar.markdown("---")
 st.sidebar.header("用户输入参数")
@@ -78,7 +79,7 @@ holding_years = st.sidebar.slider("持有年限", 1, 10, 1)
 
 
 
-# 当前EPS和PE作为参数继续用于计算
+#  ✅当前EPS和PE作为参数继续用于计算
 current_eps = eps_default
 current_pe = pe_default
 

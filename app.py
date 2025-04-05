@@ -1,5 +1,24 @@
 import streamlit as st
 
+# ✅ 自定义蓝色滑动条样式
+st.markdown(
+    """
+    <style>
+    .stSlider > div[data-baseweb="slider"] > div {
+        color: #1f77b4;
+    }
+    .stSlider [role="slider"] {
+        background-color: #1f77b4;
+    }
+    .stSlider [data-testid="stSlider"] > div > div:nth-child(2) {
+        background-color: #1f77b4;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ✅ 回报率计算逻辑
 def estimate_annual_return(
     buy_price,
     current_eps,
@@ -29,12 +48,12 @@ def estimate_annual_return(
         '年化回报率 (%)': round(annualized_return * 100, 2)
     }
 
-# Streamlit 页面布局
+# ✅ 页面布局
 st.title("贵州茅台投资回报率估算器")
 
 st.sidebar.header("输入参数")
 buy_price = st.sidebar.number_input("买入价（元）", value=1388.0)
-current_eps = st.sidebar.number_input("当前每股收益 EPS（元）", value=68.64)
+current_eps = st.sidebar.number_input("当前每股收益 EPS（元）", value=68.63)
 profit_growth_rate = st.sidebar.slider("利润年增长率 (%)", 0.0, 30.0, 15.38) / 100
 dividend_payout_ratio = st.sidebar.slider("分红率 (%)", 0.0, 100.0, 40.0) / 100
 leverage_rate = st.sidebar.slider("杠杆倍数", 1.0, 3.0, 1.0)
@@ -42,7 +61,7 @@ current_pe = st.sidebar.number_input("当前市盈率 PE", value=22.0)
 future_pe_assumption = st.sidebar.number_input("未来市盈率 PE 假设", value=20.0)
 holding_years = st.sidebar.slider("持有年限", 1, 10, 1)
 
-# 计算
+# ✅ 计算
 result = estimate_annual_return(
     buy_price,
     current_eps,
@@ -54,7 +73,7 @@ result = estimate_annual_return(
     holding_years
 )
 
-# 显示结果
+# ✅ 显示结果
 st.subheader("估算结果")
 for k, v in result.items():
     st.write(f"**{k}**：{v}")

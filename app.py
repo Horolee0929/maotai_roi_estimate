@@ -1,7 +1,7 @@
 import streamlit as st
 import akshare as ak
 
-# ✅ 获取最新EPS与PE（带缓存）
+# ✅ 函数定义放顶部
 @st.cache_data(show_spinner=False)
 def get_eps_pe():
     try:
@@ -13,6 +13,9 @@ def get_eps_pe():
     except Exception as e:
         st.warning("⚠️ 实时数据获取失败，使用默认值")
         return 68.63, 22.0
+
+# ✅ 💥 调用函数，获取实时数据 —— 这必须在任何使用 eps_default/pe_default 之前！
+eps_default, pe_default = get_eps_pe()
 
 
 # ✅ 回报率计算逻辑
@@ -46,11 +49,19 @@ def estimate_annual_return(
     }
 
 # ---------------- 页面展示 ----------------
+
+ ✅ 页面展示开始
 st.title("📈 贵州茅台投资回报率估算器")
 
-st.sidebar.header("实时财务数据（不可修改）")
-st.sidebar.metric("当前每股收益 EPS（元）", f"{eps_default:.2f} 元")
-st.sidebar.metric("当前市盈率 PE", f"{pe_default:.2f}")
+st.sidebar.header("实时财务数据）")
+
+if isinstance(eps_default, (float, int)) and isinstance(pe_default, (float, int)):
+    st.sidebar.metric("当前每股收益 EPS（元）", f"{eps_default:.2f} 元")
+    st.sidebar.metric("当前市盈率 PE", f"{pe_default:.2f}")
+    st.sidebar.metric("当前股价（估算）", f"{eps_default * pe_default:.2f} 元")
+else:
+    st.sidebar.warning("⚠️ EPS 或 PE 数据格式异常")
+
 
 # 通过 PE × EPS 得到当前股价（动态计算）
 price_now = eps_default * pe_default

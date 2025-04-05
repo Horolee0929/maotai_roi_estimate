@@ -45,18 +45,31 @@ def estimate_annual_return(
         '年化回报率 (%)': round(annualized_return * 100, 2)
     }
 
-# ✅ 页面布局
-st.title("贵州茅台投资回报率估算器")
+# ---------------- 页面展示 ----------------
+st.title("📈 贵州茅台投资回报率估算器")
 
-st.sidebar.header("输入参数")
-buy_price = st.sidebar.number_input("买入价（元）", value=1388.0)
-current_eps = st.sidebar.number_input("当前每股收益 EPS（元）", value=68.63)
+st.sidebar.header("实时财务数据（不可修改）")
+st.sidebar.metric("当前每股收益 EPS（元）", f"{eps_default:.2f} 元")
+st.sidebar.metric("当前市盈率 PE", f"{pe_default:.2f}")
+
+# 通过 PE × EPS 得到当前股价（动态计算）
+price_now = eps_default * pe_default
+st.sidebar.metric("当前股价（估算）", f"{price_now:.2f} 元")
+
+st.sidebar.markdown("---")
+st.sidebar.header("用户输入参数")
+
+buy_price = st.sidebar.number_input("你的买入价（元）", value=1388.0)
 profit_growth_rate = st.sidebar.slider("利润年增长率 (%)", 0.0, 30.0, 15.38) / 100
 dividend_payout_ratio = st.sidebar.slider("分红率 (%)", 0.0, 100.0, 40.0) / 100
 leverage_rate = st.sidebar.slider("杠杆倍数", 1.0, 3.0, 1.0)
-current_pe = st.sidebar.number_input("当前市盈率 PE", value=22.0)
 future_pe_assumption = st.sidebar.number_input("未来市盈率 PE 假设", value=20.0)
 holding_years = st.sidebar.slider("持有年限", 1, 10, 1)
+
+# 当前EPS和PE作为参数继续用于计算
+current_eps = eps_default
+current_pe = pe_default
+
 
 # ✅ 计算
 result = estimate_annual_return(

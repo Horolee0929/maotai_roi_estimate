@@ -11,7 +11,7 @@ st.sidebar.header("📌 股票选择")
 market = st.sidebar.selectbox("选择市场", ["A股", "美股"])
 stock_code = st.sidebar.text_input("输入股票代码 (A股如600519，美股如AAPL)", value="600519" if market == "A股" else "AAPL")
 
-# 数据获取函数
+@st.cache_data(show_spinner=False)
 def get_stock_data(market, stock_code):
     try:
         if market == "A股":
@@ -30,11 +30,12 @@ def get_stock_data(market, stock_code):
             eps = float(info.get("trailingEps", 0))
             pe = float(info.get("trailingPE", 0))
             price = float(info.get("currentPrice", 0))
-            dividend_ratio = float(info.get("dividendYield", 0) or 0)  # 小数
+            dividend_yield_raw = info.get("dividendYield")
+            dividend_ratio = float(dividend_yield_raw) if isinstance(dividend_yield_raw, (float, int)) else 0.0
         if eps and pe and price:
             return eps, pe, price, dividend_ratio, True
         else:
-            raise ValueError("缺失美股关键数据")
+            raise ValueError("缺失关键财务指标")
     except Exception as e:
         st.warning(f"⚠️ 实时数据获取失败，请手动输入参数。错误信息：{e}")
         return None, None, None, None, False

@@ -66,6 +66,16 @@ leverage_rate = st.sidebar.slider("杠杆倍数", 1.0, 3.0, 1.0)
 future_pe_assumption = st.sidebar.number_input("未来市盈率 PE 假设", value=20.0)
 holding_years = st.sidebar.slider("持有年限", 1, 10, 1)
 
+eps_default, pe_default = get_eps_pe()
+
+if isinstance(eps_default, (float, int)) and isinstance(pe_default, (float, int)):
+    st.sidebar.metric("当前每股收益 EPS（元）", f"{eps_default:.2f} 元")
+    st.sidebar.metric("当前市盈率 PE", f"{pe_default:.2f}")
+    st.sidebar.metric("当前股价（估算）", f"{eps_default * pe_default:.2f} 元")
+else:
+    st.sidebar.warning("⚠️ EPS 或 PE 数据格式异常")
+
+
 # 当前EPS和PE作为参数继续用于计算
 current_eps = eps_default
 current_pe = pe_default

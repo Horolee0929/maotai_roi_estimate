@@ -1,0 +1,8 @@
+[theme]
+base="light"
+primaryColor="#1f77b4"      # 主色（slider + 按钮 + 高亮）
+backgroundColor="#ffffff"   # 页面背景
+secondaryBackgroundColor="#f0f2f6"  # 侧边栏等背景
+textColor="#000000"
+font="sans serif"
+

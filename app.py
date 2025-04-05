@@ -19,6 +19,14 @@ def get_eps_pe():
 eps_default, pe_default = get_eps_pe()
 
 
+
+# --- 测试用，查看数据结构是否正常 ---
+df = ak.stock_a_lg_indicator()
+st.write("AKShare 获取的数据预览：", df.head())
+# --------------------------------------
+
+
+
 # ✅ 回报率计算逻辑
 def estimate_annual_return(
     buy_price,

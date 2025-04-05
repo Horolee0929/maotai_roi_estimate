@@ -1,4 +1,18 @@
 import streamlit as st
+import akshare as ak
+
+# ✅ 获取最新EPS与PE（带缓存）
+@st.cache_data(show_spinner=False)
+def get_eps_pe():
+    try:
+        df = ak.stock_fundamental_analysis_indicator(symbol="600519")
+        latest = df.iloc[-1]
+        eps = float(latest["基本每股收益(元)"])
+        pe = float(latest["市盈率"])
+        return eps, pe
+    except Exception as e:
+        st.warning("⚠️ 实时数据获取失败，使用默认值")
+        return 68.63, 22.0
 
 
 # ✅ 回报率计算逻辑

@@ -1,44 +1,5 @@
 import streamlit as st
 
-# ✅ 自定义蓝色滑动条样式
-st.markdown(
-    """
-    <style>
-    /* 滑动条轨道背景（整条线条） */
-    input[type="range"] {
-        accent-color: #1f77b4; /* 通用的蓝色滑条样式 */
-    }
-
-    /* WebKit浏览器专用：轨道背景（未选中区域） */
-    input[type="range"]::-webkit-slider-runnable-track {
-        background: #cce5ff;
-        height: 6px;
-        border-radius: 4px;
-    }
-
-    /* WebKit：滑块（thumb）颜色 */
-    input[type="range"]::-webkit-slider-thumb {
-        background: #1f77b4;
-        border: none;
-    }
-
-    /* Firefox专用：轨道高亮部分 */
-    input[type="range"]::-moz-range-progress {
-        background-color: #1f77b4;
-    }
-
-    input[type="range"]::-moz-range-track {
-        background-color: #cce5ff;
-    }
-
-    input[type="range"]::-moz-range-thumb {
-        background-color: #1f77b4;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 
 # ✅ 回报率计算逻辑
 def estimate_annual_return(

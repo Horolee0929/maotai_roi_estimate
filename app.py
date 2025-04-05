@@ -10,6 +10,11 @@ st.title("📈 贵州茅台实时估值 + 回报计算器")
 def get_maotai_data():
     try:
         df = ak.stock_financial_analysis_indicator()
+        # ✅ 调试
+        st.write("AK 返回数据结构预览：", df.head())  
+        st.write("列名列表：", df.columns.tolist())    
+         # ✅ 调试
+        
         if "股票简称" in df.columns:
             df = df[df["股票简称"] == "贵州茅台"]
         elif "股票代码" in df.columns:

@@ -50,7 +50,7 @@ if data_success:
     col1.metric("每股收益 EPS", f"{eps:.2f}")
     col2.metric("市盈率 PE", f"{pe:.2f}")
     col3.metric("当前股价", f"{price_now:.2f}")
-    col4.metric("股息率", f"{dividend_ratio*100:.2f}%")
+    col4.metric("股息率", f"{dividend_ratio * 100:.2f}%")
 else:
     eps = st.number_input("每股收益 EPS（手动输入）", min_value=0.0, step=0.1, format="%.2f")
     pe = st.number_input("市盈率 PE（手动输入）", min_value=0.0, step=0.1, format="%.2f")
